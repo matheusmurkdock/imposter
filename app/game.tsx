@@ -369,17 +369,30 @@ export default function GameScreen() {
         <View style={styles.playersGrid}>
           {alivePlayers.map((player) => (
             <View key={player.id} style={styles.playerCard}>
-              <MaterialCommunityIcons
-                name={player.avatarIcon as any}
-                size={40}
-                color={COLORS.textDark}
-              />
-              <Text style={styles.playerName}>{player.name}</Text>
-              <View style={styles.aliveIndicator}>
+              <View style={styles.cardInnerBorder}>
                 <MaterialCommunityIcons
                   name="cards-diamond"
-                  size={12}
+                  size={20}
                   color={COLORS.accentRed}
+                  style={styles.cardTopDiamond}
+                />
+                <View style={styles.cardPatternGrid}>
+                  {[...Array(6)].map((_, i) => (
+                    <MaterialCommunityIcons
+                      key={i}
+                      name="cards-diamond"
+                      size={16}
+                      color={i % 2 === 0 ? COLORS.accentRed : COLORS.accentBlue}
+                      style={{ opacity: 0.7 }}
+                    />
+                  ))}
+                </View>
+                <Text style={styles.playerName}>{player.name}</Text>
+                <MaterialCommunityIcons
+                  name="cards-diamond"
+                  size={20}
+                  color={COLORS.accentBlue}
+                  style={styles.cardBottomDiamond}
                 />
               </View>
             </View>
@@ -542,24 +555,46 @@ const styles = StyleSheet.create({
   playerCard: {
     backgroundColor: COLORS.cardSurface,
     borderRadius: BORDER_RADIUS.card,
-    padding: SPACING.md,
-    alignItems: 'center',
-    width: 100,
+    padding: SPACING.sm,
+    width: 110,
+    height: 150,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 6,
+    transform: [{ rotate: '-2deg' }],
+  },
+  cardInnerBorder: {
+    flex: 1,
+    borderWidth: 2,
+    borderColor: COLORS.accentRed,
+    borderRadius: BORDER_RADIUS.sm,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: SPACING.sm,
+  },
+  cardTopDiamond: {
+    marginBottom: SPACING.xs,
+  },
+  cardBottomDiamond: {
+    marginTop: SPACING.xs,
+  },
+  cardPatternGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    width: 60,
+    gap: 4,
+    marginVertical: SPACING.sm,
   },
   playerName: {
     fontFamily: FONTS.serif,
-    fontSize: 13,
+    fontSize: 14,
     color: COLORS.textDark,
-    marginTop: SPACING.xs,
     textAlign: 'center',
-  },
-  aliveIndicator: {
-    marginTop: SPACING.xs,
+    letterSpacing: 1,
+    marginVertical: SPACING.xs,
   },
   eliminatedSectionTitle: {
     fontFamily: FONTS.serif,
