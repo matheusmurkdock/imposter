@@ -5,6 +5,8 @@ import {
   StyleSheet,
   Pressable,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -64,9 +66,14 @@ export default function LobbyScreen() {
   };
 
   return (
-    <ScrollView
+    <KeyboardAvoidingView
       style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+    <ScrollView
+      style={styles.scrollView}
       contentContainerStyle={styles.contentContainer}
+      keyboardShouldPersistTaps="handled"
     >
       {/* Header */}
       <View style={styles.header}>
@@ -191,6 +198,7 @@ export default function LobbyScreen() {
         </Text>
       )}
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -265,9 +273,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.primaryBg,
   },
+  scrollView: {
+    flex: 1,
+  },
   contentContainer: {
     padding: SPACING.lg,
-    paddingTop: 60,
+    paddingTop: Platform.OS === 'android' ? 40 : 60,
     paddingBottom: 40,
   },
   header: {
@@ -361,8 +372,9 @@ const styles = StyleSheet.create({
   },
   roleChipText: {
     fontFamily: FONTS.serifRegular,
-    fontSize: 12,
+    fontSize: 11,
     color: COLORS.textDark,
+    flexShrink: 1,
   },
   startButton: {
     flexDirection: 'row',
@@ -374,6 +386,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.xl,
     borderRadius: BORDER_RADIUS.card,
     alignSelf: 'center',
+    minWidth: 200,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
@@ -389,9 +402,10 @@ const styles = StyleSheet.create({
   },
   startButtonText: {
     fontFamily: FONTS.serif,
-    fontSize: 22,
+    fontSize: 20,
     color: COLORS.textDark,
     letterSpacing: 2,
+    textAlign: 'center',
   },
   startButtonTextDisabled: {
     color: COLORS.textMuted,

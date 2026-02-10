@@ -6,6 +6,8 @@ import {
   Pressable,
   TextInput,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -152,7 +154,7 @@ export default function RegisterScreen() {
         <Text style={styles.passPhoneTitle}>
           Pass the phone to
         </Text>
-        <Text style={styles.passPhoneName}>{currentPlayer.name}</Text>
+        <Text style={styles.passPhoneName} numberOfLines={1} ellipsizeMode="tail">{currentPlayer.name}</Text>
         <Text style={styles.passPhoneSubtitle}>
           Player {revealIndex + 1} of {players.length}
         </Text>
@@ -204,7 +206,7 @@ export default function RegisterScreen() {
               </Text>
               <View style={styles.wordDivider} />
               <Text style={styles.wordLabel}>Your Word</Text>
-              <Text style={[styles.wordText, currentPlayer.role === 'mr_white' && styles.wordTextMrWhite]}>
+              <Text style={[styles.wordText, currentPlayer.role === 'mr_white' && styles.wordTextMrWhite]} numberOfLines={2} ellipsizeMode="tail">
                 {roleInfo.word}
               </Text>
               <View style={styles.wordDivider} />
@@ -242,8 +244,12 @@ export default function RegisterScreen() {
 
   // ---- COLLECTION PHASE ----
   return (
-    <ScrollView
+    <KeyboardAvoidingView
       style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+    <ScrollView
+      style={styles.scrollView}
       contentContainerStyle={styles.scrollContent}
       keyboardShouldPersistTaps="handled"
     >
@@ -302,6 +308,7 @@ export default function RegisterScreen() {
         </Text>
       </Pressable>
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -310,9 +317,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.primaryBg,
   },
+  scrollView: {
+    flex: 1,
+  },
   scrollContent: {
     padding: SPACING.lg,
-    paddingTop: 80,
+    paddingTop: Platform.OS === 'android' ? 60 : 80,
     paddingBottom: 40,
     alignItems: 'center',
   },
@@ -391,9 +401,9 @@ const styles = StyleSheet.create({
   },
   confirmButtonText: {
     fontFamily: FONTS.serif,
-    fontSize: 20,
+    fontSize: 18,
     color: COLORS.textDark,
-    letterSpacing: 2,
+    letterSpacing: 1,
     textAlign: 'center',
   },
   buttonPressed: {
@@ -411,11 +421,13 @@ const styles = StyleSheet.create({
   },
   passPhoneName: {
     fontFamily: FONTS.serif,
-    fontSize: 32,
+    fontSize: 28,
     color: COLORS.textLight,
     textAlign: 'center',
-    letterSpacing: 3,
+    letterSpacing: 2,
     marginTop: SPACING.xs,
+    paddingHorizontal: SPACING.lg,
+    maxWidth: '100%',
   },
   passPhoneSubtitle: {
     fontFamily: FONTS.serifRegular,
@@ -475,9 +487,10 @@ const styles = StyleSheet.create({
   },
   roleLabel: {
     fontFamily: FONTS.serif,
-    fontSize: 22,
-    letterSpacing: 4,
+    fontSize: 20,
+    letterSpacing: 3,
     marginTop: SPACING.md,
+    textAlign: 'center',
   },
   wordDivider: {
     width: 60,
@@ -493,10 +506,11 @@ const styles = StyleSheet.create({
   },
   wordText: {
     fontFamily: FONTS.serif,
-    fontSize: 28,
+    fontSize: 24,
     color: COLORS.textDark,
     textAlign: 'center',
     marginTop: SPACING.xs,
+    maxWidth: '100%',
   },
   wordTextMrWhite: {
     fontSize: 18,

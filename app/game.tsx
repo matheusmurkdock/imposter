@@ -8,6 +8,9 @@ import {
   Modal,
   TextInput,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -190,7 +193,7 @@ export default function GameScreen() {
                   size={24}
                   color={getRoleColor(player.role)}
                 />
-                <Text style={styles.revealPlayerName}>{player.name}</Text>
+                <Text style={styles.revealPlayerName} numberOfLines={1} ellipsizeMode="tail">{player.name}</Text>
                 <Text style={[styles.revealPlayerRole, { color: getRoleColor(player.role) }]}>
                   {player.role === 'mr_white' ? 'Mr. White' : player.role === 'undercover' ? 'Undercover' : 'Civilian'}
                 </Text>
@@ -230,7 +233,7 @@ export default function GameScreen() {
             />
             <Text style={styles.mrWhiteGuessTitle}>MR. WHITE'S LAST CHANCE</Text>
             <View style={styles.divider} />
-            <Text style={styles.mrWhiteGuessSubtitle}>
+            <Text style={styles.mrWhiteGuessSubtitle} numberOfLines={1} ellipsizeMode="tail">
               {eliminatedPlayer.name} was Mr. White!
             </Text>
             <Text style={styles.mrWhiteGuessHint}>
@@ -294,7 +297,7 @@ export default function GameScreen() {
               size={64}
               color={getRoleColor(eliminatedPlayer.role)}
             />
-            <Text style={styles.eliminatedName}>{eliminatedPlayer.name}</Text>
+            <Text style={styles.eliminatedName} numberOfLines={2} ellipsizeMode="tail">{eliminatedPlayer.name}</Text>
             <Text style={styles.eliminatedVerb}>has been eliminated!</Text>
             <View style={styles.divider} />
             <MaterialCommunityIcons
@@ -356,7 +359,15 @@ export default function GameScreen() {
   
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.boardContent}>
+      <KeyboardAvoidingView 
+        style={styles.keyboardView}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      >
+        <ScrollView 
+          contentContainerStyle={styles.boardContent}
+          keyboardShouldPersistTaps="handled"
+        >
         {/* Header */}
         <View style={styles.boardHeader}>
           <Text style={styles.boardTitle}>DISCUSSION</Text>
@@ -387,7 +398,7 @@ export default function GameScreen() {
                     />
                   ))}
                 </View>
-                <Text style={styles.playerName}>{player.name}</Text>
+                <Text style={styles.playerName} numberOfLines={2} ellipsizeMode="tail">{player.name}</Text>
                 <MaterialCommunityIcons
                   name="cards-diamond"
                   size={20}
@@ -411,7 +422,7 @@ export default function GameScreen() {
                     size={20}
                     color={COLORS.textMuted}
                   />
-                  <Text style={styles.deadPlayerName}>{player.name}</Text>
+                  <Text style={styles.deadPlayerName} numberOfLines={1} ellipsizeMode="tail">{player.name}</Text>
                   <MaterialCommunityIcons
                     name={getRoleIcon(player.role) as any}
                     size={14}
@@ -423,6 +434,7 @@ export default function GameScreen() {
           </>
         )}
       </ScrollView>
+    </KeyboardAvoidingView>
 
       {/* Vote Button */}
       <View style={styles.bottomBar}>
@@ -452,7 +464,7 @@ export default function GameScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.votingCard}>
             <Text style={styles.votingTitle}>VOTE</Text>
-            <Text style={styles.voterName}>
+            <Text style={styles.voterName} numberOfLines={1} ellipsizeMode="tail">
               {alivePlayers[currentVoterIndex]?.name}'s turn to vote
             </Text>
             <Text style={styles.voterProgress}>
@@ -487,6 +499,8 @@ export default function GameScreen() {
                         selectedTarget === candidate.id &&
                           styles.candidateNameSelected,
                       ]}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
                     >
                       {candidate.name}
                     </Text>
@@ -524,9 +538,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.primaryBg,
   },
+  keyboardView: {
+    flex: 1,
+  },
   boardContent: {
     padding: SPACING.lg,
-    paddingTop: 60,
+    paddingTop: Platform.OS === 'android' ? 20 : 60,
     paddingBottom: 120,
   },
   boardHeader: {
@@ -590,11 +607,13 @@ const styles = StyleSheet.create({
   },
   playerName: {
     fontFamily: FONTS.serif,
-    fontSize: 14,
+    fontSize: 13,
     color: COLORS.textDark,
     textAlign: 'center',
-    letterSpacing: 1,
+    letterSpacing: 0.5,
     marginVertical: SPACING.xs,
+    maxWidth: '100%',
+    flexShrink: 1,
   },
   eliminatedSectionTitle: {
     fontFamily: FONTS.serif,
@@ -620,6 +639,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.sm,
     paddingVertical: SPACING.xs,
     borderRadius: BORDER_RADIUS.sm,
+    maxWidth: '100%',
   },
   deadPlayerName: {
     fontFamily: FONTS.serifRegular,
@@ -627,6 +647,7 @@ const styles = StyleSheet.create({
     color: COLORS.textLight,
     opacity: 0.6,
     textDecorationLine: 'line-through',
+    maxWidth: 80,
   },
   bottomBar: {
     position: 'absolute',
@@ -688,6 +709,8 @@ const styles = StyleSheet.create({
     color: COLORS.textDark,
     textAlign: 'center',
     marginTop: SPACING.sm,
+    paddingHorizontal: SPACING.lg,
+    flexWrap: 'wrap',
   },
   voterProgress: {
     fontFamily: FONTS.serifItalic,
